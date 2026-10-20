@@ -35,5 +35,13 @@
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
-  }
+  },
+"scripts": {
+  "dev": "next dev",
+  "build" : "next build",
+  "start" : "next start",
+  "init" : "eslint .",
+  "typecheck" : "tsc --noEmit"
+}
+
 }
