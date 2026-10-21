@@ -41,3 +41,16 @@ export const customerRepo: CustomerRepo = {
     return data
   },
 }
+
+export interface OrgRepo {
+  get(orgId: string): Promise<{ id: string; name: string; timezone: string }>
+}
+
+export const orgRepo: OrgRepo = {
+  async get(orgId) {
+    const supabase = await createClient()
+    const { data, error } = await supabase.from("organization").select("id, name, timezone").eq("id", orgId).single()
+    if (error) throw error
+    return data
+  },
+}
