@@ -3,6 +3,8 @@ import type { Database } from "@/lib/database.types"
 export type ReservationStatus = Database["public"]["Enums"]["reservation_status"]
 export type Channel = Database["public"]["Enums"]["channel"]
 export type NotificationStatus = Database["public"]["Enums"]["notification_status"]
+export type AppRole = Database["public"]["Enums"]["app_role"]               // "owner" | "admin" | "staff" | "viewer"
+export type AppPermission = Database["public"]["Enums"]["app_permission"]   // "reservation.create" | ...
 
 export type ReservationRow = {
   id : string

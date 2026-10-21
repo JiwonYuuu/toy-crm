@@ -175,6 +175,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"role_permissions": {
+                  Row: {
+                    "permission": Database["public"]['Enums']["app_permission"],"role": Database["public"]['Enums']["app_role"]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "permission": Database["public"]['Enums']["app_permission"],"role": Database["public"]['Enums']["app_role"]
+                  }
+                  Update: {
+                    "permission"?: Database["public"]['Enums']["app_permission"],"role"?: Database["public"]['Enums']["app_role"]
+                  }
+                  Relationships: [
+                    
+                  ]
                 }
           }
           Views: {
@@ -184,7 +198,7 @@ isOneToOne: false
             [_ in never]: never
           }
           Enums: {
-            "app_role": "owner"|"admin"|"staff"|"viewer","channel": "kakao"|"sms"|"email","notification_status": "pending"|"sent"|"failed","reservation_status": "booked"|"cancelled"|"completed"
+            "app_permission": "reservation.create"|"reservation.delete"|"member.manage","app_role": "owner"|"admin"|"staff"|"viewer","channel": "kakao"|"sms"|"email","notification_status": "pending"|"sent"|"failed","reservation_status": "booked"|"cancelled"|"completed"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -304,7 +318,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "app_role": ["owner", "admin", "staff", "viewer"],"channel": ["kakao", "sms", "email"],"notification_status": ["pending", "sent", "failed"],"reservation_status": ["booked", "cancelled", "completed"]
+            "app_permission": ["reservation.create", "reservation.delete", "member.manage"],"app_role": ["owner", "admin", "staff", "viewer"],"channel": ["kakao", "sms", "email"],"notification_status": ["pending", "sent", "failed"],"reservation_status": ["booked", "cancelled", "completed"]
           }
         }
 } as const
