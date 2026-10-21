@@ -7,7 +7,7 @@ export type Customer = {
   phone: string | null
   email: string | null
   kakao_id: string | null
-  line_id: string | null
+  line_id?: string | null
   preferred_channel: ChannelKey
 }
 
