@@ -9,7 +9,7 @@ const statusBadge = cva(
       status: {
         booked: "bg-primary/10 text-primary",
         cancelled: "bg-muted text-muted-foreground line-through",
-        completed: "bg-emerald-500/10 text-emerald-700",
+        completed: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400",
       } satisfies Record<ReservationStatus, string>,
     },
   },

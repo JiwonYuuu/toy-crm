@@ -1,4 +1,4 @@
-import type { CustomerRow, ReservationRow} from "./types"
+import type { CustomerDetailRow, CustomerInput, CustomerRow, NotificationRow, ReservationRow, ResourceRow } from "./types"
 import { notImplemented } from "./not-implemented"
 import { createClient } from "@/lib/supabase/server"
 
@@ -8,6 +8,16 @@ export interface ReservationRepo{
 
 export interface CustomerRepo{
   list(orgId: string): Promise<CustomerRow[]>
+  listDetail(orgId: string): Promise<CustomerDetailRow[]>
+  create(orgId: string, input: CustomerInput): Promise<CustomerRow>
+}
+
+export interface ResourceRepo {
+  list(orgId: string): Promise<ResourceRow[]>
+}
+
+export interface NotificationRepo {
+  list(orgId: string): Promise<NotificationRow[]>
 }
 
 export const reservationRepo: ReservationRepo = {
@@ -15,13 +25,16 @@ export const reservationRepo: ReservationRepo = {
     const supabase = await createClient()
     const { data, error } = await supabase
       .from("reservation")
-      .select("id, starts_at, status, customer:customer!reservation_customer_fk(name), resource:resource_id(name)")
+      .select("id, customer_id, resource_id, starts_at, ends_at, status, customer:customer!reservation_customer_fk(name), resource:resource_id(name)")
       .eq("org_id", orgId)
       .order("starts_at")
     if (error) throw error
     return data.map((r) => ({
       id: r.id,
+      customer_id: r.customer_id,
+      resource_id: r.resource_id,
       starts_at: r.starts_at,
+      ends_at: r.ends_at,
       status: r.status,
       customer_name: r.customer.name,
       resource_name: r.resource.name,
@@ -39,6 +52,59 @@ export const customerRepo: CustomerRepo = {
       .order("name")
     if (error) throw error
     return data
+  },
+  async listDetail(orgId) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("customer")
+      .select("id, name, phone, email, kakao_id, preferred_channel")
+      .eq("org_id", orgId)
+      .order("name")
+    if (error) throw error
+    return data
+  },
+  async create(orgId, input) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("customer")
+      .insert({ org_id: orgId, ...input })
+      .select("id, name, phone")
+      .single()
+    if (error) throw error
+    return data
+  },
+}
+
+export const resourceRepo: ResourceRepo = {
+  async list(orgId) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("resource")
+      .select("id, name")
+      .eq("org_id", orgId)
+      .order("name")
+    if (error) throw error
+    return data
+  },
+}
+
+export const notificationRepo: NotificationRepo = {
+  async list(orgId) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("notification")
+      .select("id, kind, status, created_at, reservation:reservation_id(customer_id, starts_at)")
+      .eq("org_id", orgId)
+      .order("created_at", { ascending: false })
+    if (error) throw error
+    return data.map((n) => ({
+      id: n.id,
+      customer_id: n.reservation.customer_id,
+      kind: n.kind,
+      status: n.status,
+      created_at: n.created_at,
+      reservation_starts_at: n.reservation.starts_at,
+    }))
   },
 }
 
