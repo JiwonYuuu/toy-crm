@@ -58,6 +58,50 @@
   }
 }
 
+/* 병원 테마: 화면에 .theme-clinic 요소가 있을 때만 적용된다 (playground 6페이지).
+   :root에 걸어야 body로 포털되는 다이얼로그, 드롭다운도 같은 색을 쓴다 */
+@layer base {
+  :root:has(.theme-clinic) {
+    --background: 214 45% 97%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 214 60% 95%;
+    --secondary-foreground: 222 47% 20%;
+    --muted: 214 40% 95%;
+    --muted-foreground: 215 16% 45%;
+    --accent: 214 80% 96%;
+    --accent-foreground: 221 70% 35%;
+    --border: 214 32% 90%;
+    --input: 214 32% 88%;
+    --ring: 221 83% 53%;
+    --radius: 0.75rem;
+  }
+  :root.dark:has(.theme-clinic) {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 96%;
+    --card: 222 40% 9.5%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 40% 9.5%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 8%;
+    --secondary: 217 33% 16%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 217 33% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 33% 16%;
+    --accent-foreground: 210 40% 96%;
+    --border: 217 30% 17%;
+    --input: 217 30% 20%;
+    --ring: 217 91% 60%;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
