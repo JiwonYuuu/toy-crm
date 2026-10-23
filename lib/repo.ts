@@ -4,16 +4,20 @@ import { createClient } from "@/lib/supabase/server"
 
 export interface ReservationRepo{
   list(orgId: string): Promise<ReservationRow[]>
+    create(input: { org_id: string; customer_id: string; resource_id: string; starts_at: string }): Promise<{ id: string }>
+    delete(id : string): Promise<{ deleted: number }>
 }
 
 export interface CustomerRepo{
   list(orgId: string): Promise<CustomerRow[]>
   listDetail(orgId: string): Promise<CustomerDetailRow[]>
   create(orgId: string, input: CustomerInput): Promise<CustomerRow>
+  findByName(orgId: string, name: string): Promise<CustomerRow | null>
 }
 
 export interface ResourceRepo {
   list(orgId: string): Promise<ResourceRow[]>
+  findByName(orgId: string, name: string): Promise<{ id: string; name: string } | null>
 }
 
 export interface NotificationRepo {
@@ -40,6 +44,29 @@ export const reservationRepo: ReservationRepo = {
       resource_name: r.resource.name,
     }))
   },
+  async create(input) {
+    const supabase = await createClient()
+    const startsAt = new Date(input.starts_at)
+    const { data, error } = await supabase
+      .from("reservation")
+      .insert({
+        org_id: input.org_id,
+        customer_id: input.customer_id,
+        resource_id: input.resource_id,
+        starts_at: startsAt.toISOString(),
+        ends_at: new Date(startsAt.getTime() + 60 * 60 * 1000).toISOString(),   // 예약 시간은 1시간
+      })
+      .select("id")
+      .single()
+    if (error) throw error
+    return data
+  },
+  async delete(id) {
+    const supabase = await createClient()
+    const { data, error } = await supabase.from("reservation").delete().eq("id", id).select("id")
+    if (error) throw error
+    return { deleted: data.length }
+  }
 }
 
 export const customerRepo: CustomerRepo = {
@@ -52,6 +79,17 @@ export const customerRepo: CustomerRepo = {
       .order("name")
     if (error) throw error
     return data
+  },
+  async findByName(orgId, name){
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("customer")
+      .select("id, name, phone")
+      .eq("org_id",orgId)
+      .eq("name", name)
+      .maybeSingle()
+    if (error) throw error
+   return data
   },
   async listDetail(orgId) {
     const supabase = await createClient()
@@ -83,6 +121,17 @@ export const resourceRepo: ResourceRepo = {
       .select("id, name")
       .eq("org_id", orgId)
       .order("name")
+    if (error) throw error
+    return data
+  },
+  async findByName(orgId, name) {
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from("resource")
+      .select("id, name")
+      .eq("org_id", orgId)
+      .eq("name", name)
+      .maybeSingle()
     if (error) throw error
     return data
   },
